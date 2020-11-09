@@ -1,4 +1,5 @@
-为了浏览大规模代码 AOSP，androidref.com软件速度太慢，在本地Ubuntu20.4系统中上构建了opengrok环境，过程记录如下：
+# OpenGrok阅读AOSP代码
+为了浏览大规模代码 AOSP，androidref.com网站速度太慢，在本地Ubuntu20.4系统中上构建了opengrok环境，过程记录如下：
 
 ## 安装依赖
 根据 https://oracle.github.io/opengrok/ 描述
@@ -32,7 +33,7 @@ OpenJDK 64-Bit Server VM (build 11.0.9+11-Ubuntu-0ubuntu1.20.04, mixed mode, sha
 官方安装指导：https://tomcat.apache.org/tomcat-9.0-doc/building.html
 
 
-下载
+下载tomcat9二进制：
 
 ```bash
 july@july:~/bin$ wget https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.39/bin/apache-tomcat-9.0.39.zip
@@ -48,94 +49,89 @@ unzip apache-tomcat-9.0.39.zip
 #增加执行权限
 chmod a+x -R ./apache-tomcat-9.0.39
 
-```
+#执行启动
+cd ~/bin/apache-tomcat-9.0.39/bin
 
-但其实可以通过 ```sudo apt install tomcat9```安装，不必下载代码编译。安装过程中可以看到几个关键的目录
-```bash
-Creating user tomcat (Apache Tomcat) with uid 997 and gid 997.
-
-Creating config file /etc/tomcat9/tomcat-users.xml with new version
-
-Creating config file /etc/tomcat9/web.xml with new version
-
-Creating config file /etc/tomcat9/server.xml with new version
-
-Creating config file /etc/tomcat9/logging.properties with new version
-
-Creating config file /etc/tomcat9/context.xml with new version
-
-Creating config file /etc/tomcat9/catalina.properties with new version
-
-Creating config file /etc/tomcat9/jaspic-providers.xml with new version
-
-Creating config file /etc/logrotate.d/tomcat9 with new version
-
-Creating config file /etc/default/tomcat9 with new version
-Created symlink /etc/systemd/system/multi-user.target.wants/tomcat9.service → /lib/systemd/system/tomcat9.service.
-/usr/sbin/policy-rc.d returned 101, not running 'start tomcat9.service'
-Processing triggers for rsyslog (8.2001.0-1ubuntu1.1) ...
-invoke-rc.d: policy-rc.d denied execution of try-restart.
-Processing triggers for libc-bin (2.31-0ubuntu9.1) ...
-
-```
-可以到/usr/share/tomcat9/bin目录下执行启动脚本startup.sh。
-```bash
-july@july:/usr/share/tomcat9/bin$ sudo ./startup.sh
-Using CATALINA_BASE:   /usr/share/tomcat9
-Using CATALINA_HOME:   /usr/share/tomcat9
-Using CATALINA_TMPDIR: /usr/share/tomcat9/temp
-Using JRE_HOME:        /usr
-Using CLASSPATH:       /usr/share/tomcat9/bin/bootstrap.jar:/usr/share/tomcat9/bin/tomcat-juli.jar
-touch: cannot touch '/usr/share/tomcat9/logs/catalina.out': No such file or directory
-./catalina.sh: 471: cannot create /usr/share/tomcat9/logs/catalina.out: Directory nonexistent
+ ./catalina.sh start
 
 ```
 
-创建logs目录，并修改写权限
+打开8080端口查看到如下，说明tomcat9安装成功：
+
+![](./.assets/opengrok-tomcat.PNG)
+
+## 安装 universal-ctags
+
+Ubuntu20.04可以在apt中直接安装，虽然不是最新的版本。
 
 ```bash
-sudo mkdir logs
-sudo chmod a+w logs
+sudo apt install universal-ctags
 ```
 
-启动tomcat9
-
-
-
-```
-july@july:/usr/share/tomcat9/bin$ ./startup.sh
-Using CATALINA_BASE:   /usr/share/tomcat9
-Using CATALINA_HOME:   /usr/share/tomcat9
-Using CATALINA_TMPDIR: /usr/share/tomcat9/temp
-Using JRE_HOME:        /usr/lib/jvm/java-11-openjdk-amd64
-Using CLASSPATH:       /usr/share/tomcat9/bin/bootstrap.jar:/usr/share/tomcat9/bin/tomcat-juli.jar
-Tomcat started.
-july@july:/usr/share/tomcat9/bin$
-july@july:/usr/share/tomcat9/bin$
+查看ctags的版本，检查是否生效：
+```bash
+july@july:~$ ctags --version
+Universal Ctags 0.0.0, Copyright (C) 2015 Universal Ctags Team
+Universal Ctags is derived from Exuberant Ctags.
+Exuberant Ctags 5.8, Copyright (C) 1996-2009 Darren Hiebert
+  Compiled: Jan  6 2019, 23:23:29
+  URL: https://ctags.io/
+  Optional compiled features: +wildcards, +regex, +iconv, +option-directory, +xpath, +json, +interactive, +sandbox, +yaml
 
 ```
 
-第一个依赖jdk>8已经安装完成。但是需要设置JAVA_HOME环境变量，编辑~/.bashrc增加环境变量，
+# 安装OpenGrok
 
-如何找到jdk的安装目录呢？一般在/usr/lib/jvm/java-xx-openjdk-xxx目录下，也可以通过如下方法找到：
+## 安装python3 工具
+```
+sudo apt-get install python3-venv python3-pip
+
+```
+
+## 下载release
 
 ```bash
-july@july:/etc/alternatives$ which java
-/usr/bin/java
-july@july:/etc/alternatives$ ls -l /usr/bin/java
-lrwxrwxrwx 1 root root 22 Nov  8 09:59 /usr/bin/java -> /etc/alternatives/java
-july@july:/etc/alternatives$ ls -l /etc/alternatives/java
-lrwxrwxrwx 1 root root 43 Nov  8 09:59 /etc/alternatives/java -> /usr/lib/jvm/java-11-openjdk-amd64/bin/java
-july@july:/etc/alternatives$
+wget https://github.com/oracle/opengrok/releases/download/1.5.7/opengrok-1.5.7.tar.gz
 
+ tar xzf opengrok-1.5.7.tar.gz
+ cd opengrok-1.5.7/tools/
+
+ python3 -m pip install opengrok-tools.tar.gz
+
+  
 ```
-
-设置环境变量，在~/.bash增加如下代码并重新加载source ~/.bashrc。
+将以下代码添加到~/.bashrc，然后执行``` source ~/.bashrc```重新加载
 
 ```bash
-export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+
+export PATH=~/.local/bin:$PATH
+
 ```
 
+## 部署tomcat webapp
+
+```
+opengrok-deploy -c /devdata/projects/opengrok/aosp/etc/configuration.xml \
+    /devdata/projects/opengrok-1.5.7/lib/source.war /home/july/bin/apache-tomcat-9.0.39/webapps
+```
+
+## 建立索引
+
+```bash
+    -c /usr/bin/ctags \
+opengrok-indexer \
+    -J=-Djava.util.logging.config.file=/devdata/projects/opengrok/aosp/etc/logging.properties \
+    -a /devdata/projects/opengrok-1.5.7/lib/opengrok.jar -- \
+    -s /devdata/projects/aosp -d /devdata/projects/opengrok/aosp/data -H -P -S -G \
+    -W /devdata/projects/opengrok/aosp/etc/configuration.xml -U http://localhost:8080/source
+
+```
+
+至此就可以等待索引完成，就可以浏览了。
 
 
 
+
+# docker方式
+
+官方提供了官方的docker镜像： https://github.com/oracle/opengrok/blob/master/docker/README.md，但官方介绍说大规模工程性能不好，所以我没有尝试。
