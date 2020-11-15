@@ -19,7 +19,7 @@ X-Powered-By: PHP/5.6.0
 0
 
 
-。。。：
+量化NOK的：
 GET /XQAssistant/querypermissions?ver=888.10&product=2&account=89d20160e64958202e89f42a01ec32ea&dsn=GenuineIntelBFEBFBFF000206D7:D25B510A:005056C00001&rand=50000096952 HTTP/1.1
 Accept: *,*/*
 Accept-Language: zh-cn
