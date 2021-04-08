@@ -15,7 +15,7 @@ const JINGOUWUCHE = 4;
 const JIESUAN = 5;
 const SUBMIT = 6;
 
-const WAIT_LOAD  = false
+const WAIT_LOAD  = true;
 
 var stage = STARTING;
 
@@ -53,6 +53,10 @@ function go() {
     // console.log("正在帮你抢购 ＊ 刷新" + count + "次");
     //console.log("host:" + window.location.hostname);
     count++;
+
+    if (count % 100 == 0){
+        console.log("等待抢购开始");
+    }
 
     var dateNow = Date.now()
 
@@ -146,6 +150,7 @@ function go() {
                     wait_loaded = true;
                     loaded = false;
                 }
+                
                 break;
             }
         case JIESUAN:

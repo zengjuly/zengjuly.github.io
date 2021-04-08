@@ -19,6 +19,47 @@ X-Powered-By: PHP/5.6.0
 0
 
 
+OK:
+
+GET http://118.89.109.176/api/user/check.php?cpu_id=BFEBFBFF000206D7&disk_code=203302A002DB&mac_addr=00-E0-4C-67-AF-63&mc1=A16ADA4E6569C0FD9AADD3708FA277C7&mc2=D06AC047930781AC8AB7724FE7A0E7C5&tdx=1 HTTP/1.1
+User-Agent: CHZHSHL
+Host: 118.89.109.176
+Pragma: no-cache
+
+HTTP/1.1 200 OK
+Server: nginx/1.10.1
+Date: Mon, 16 Nov 2020 15:08:13 GMT
+Content-Type: text/html; charset=UTF-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+X-Powered-By: PHP/5.6.0
+
+3
+166
+0
+
+GET http://118.89.109.176/api/user/check.php?cpu_id=BFEBFBFF000206D7&disk_code=203302A002DB&mac_addr=00-E0-4C-67-AF-63&mc1=A16ADA4E6569C0FD9AADD3708FA277C7&mc2=D06AC047930781AC8AB7724FE7A0E7C5&tdx=1 HTTP/1.1
+User-Agent: CHZHSHL
+Host: 118.89.109.176
+Pragma: no-cache
+
+
+HTTP/1.1 200 OK
+Server: nginx/1.10.1
+Date: Tue, 17 Nov 2020 14:51:15 GMT
+Content-Type: text/html; charset=UTF-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+X-Powered-By: PHP/5.6.0
+
+3
+166
+0
+
+
+
+
+
 量化NOK的：
 GET /XQAssistant/querypermissions?ver=888.10&product=2&account=89d20160e64958202e89f42a01ec32ea&dsn=GenuineIntelBFEBFBFF000206D7:D25B510A:005056C00001&rand=50000096952 HTTP/1.1
 Accept: *,*/*
@@ -74,3 +115,14 @@ Host: chantufeng.chanlunlianghua:5555
 Pragma: no-cache
 
 
+OK:
+GET http://101.133.169.135:5448/XQAssistant/querypermissions?ver=888.10&product=2&account=02cf70a9836e3f52562acc5feab5445a&dsn=GenuineIntelBFEBFBFF000206D7:D25B510A:00E04C67AF63&rand=a0000297068 HTTP/1.1
+Accept: *,*/*
+Accept-Language: zh-cn
+Content-Type: application/x-www-form-urlencoded
+Accept-Encoding: gzip, deflate
+User-Agent: Mozilla/5.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727)
+Host: 101.133.169.135:5448
+Pragma: no-cache
+
+"rgCmL2sj65rYfaLJxM/JWMjuTBRUuChL7iXzykohBGmvJy9OXMOThYpJA1Y2AgDkmjRhE+Q8KWcyGggWyLeTz4Mc3Td89NJYwuSWuqXYREnC1iFdxISzF3g2DqYmgE2j/ivr4d723mA+b2MgXWCl+9E3h3Ednhrhpew7w7bjflpefjf1kp0l3YgOZYtXB/w69Pjy+ODqMXHI/hUChjooZzcXXKeesIesj7X5px2hM8iUMy87MO6cXj9IdE0T0E/eEDCngYqpmgST7FEc+xhuXZeEIDiUh/yUe3iqWp3Ggi4H9fHhG6SjcDZPhjZMGo+4oww++kObPWYQwi3pKWqsoQ=="
