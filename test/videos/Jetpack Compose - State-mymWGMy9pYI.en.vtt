@@ -1,0 +1,437 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.246 --> 00:00:02.829
+(gentle music)
+
+00:00:05.290 --> 00:00:06.599
+- [Florina] In this screencast,
+
+00:00:06.599 --> 00:00:09.610
+you're going to learn about
+how state works in Compose,
+
+00:00:09.610 --> 00:00:11.480
+what are some of the APIs you can use,
+
+00:00:11.480 --> 00:00:14.503
+and how state and events
+should flow in your app.
+
+00:00:15.470 --> 00:00:17.070
+Let's take a simple example.
+
+00:00:17.070 --> 00:00:18.570
+The user can enter their name,
+
+00:00:18.570 --> 00:00:20.690
+and a greeting should be displayed.
+
+00:00:20.690 --> 00:00:22.470
+So we have a text for the greeting
+
+00:00:22.470 --> 00:00:24.283
+and a text field for the name input.
+
+00:00:25.200 --> 00:00:28.360
+If we run this now, we
+see that nothing happens.
+
+00:00:28.360 --> 00:00:31.230
+That is because the text
+field doesn't update itself.
+
+00:00:31.230 --> 00:00:34.900
+It updates when its
+value parameter changes.
+
+00:00:34.900 --> 00:00:37.150
+To do that, we need to pass in a value
+
+00:00:37.150 --> 00:00:39.650
+that represents the
+state of the text field,
+
+00:00:39.650 --> 00:00:41.540
+and then update the state
+
+00:00:41.540 --> 00:00:44.790
+when the text field
+notifies us of the change.
+
+00:00:44.790 --> 00:00:46.800
+So let's introduce a local state
+
+00:00:46.800 --> 00:00:49.500
+that holds the name that
+should be displayed.
+
+00:00:49.500 --> 00:00:53.680
+To do this, we will use
+remember of mutableStateOf,
+
+00:00:53.680 --> 00:00:56.627
+passing in the default value for the text.
+
+00:00:56.627 --> 00:00:59.490
+MutableStateOf creates a mutable state,
+
+00:00:59.490 --> 00:01:02.070
+which is an observable type in Compose.
+
+00:01:02.070 --> 00:01:05.120
+Any changes to its value will
+schedule a re-composition
+
+00:01:05.120 --> 00:01:08.810
+of any composable functions
+that read that value.
+
+00:01:08.810 --> 00:01:11.940
+So in our case, whenever
+the name state changes,
+
+00:01:11.940 --> 00:01:14.613
+the value displayed by
+TextField will change, too.
+
+00:01:15.690 --> 00:01:19.350
+Remember helps us preserve the
+state across re-compositions.
+
+00:01:19.350 --> 00:01:22.680
+Otherwise, if we would
+just use mutableStateOf
+
+00:01:22.680 --> 00:01:24.000
+without remember,
+
+00:01:24.000 --> 00:01:27.630
+every time our HelloContent
+composable gets recomposed,
+
+00:01:27.630 --> 00:01:30.373
+the state gets reinitialized
+to an empty string.
+
+00:01:31.240 --> 00:01:32.620
+We can use the remembered value
+
+00:01:32.620 --> 00:01:35.110
+as a parameter for other composables,
+
+00:01:35.110 --> 00:01:37.100
+or even as logic in statements
+
+00:01:37.100 --> 00:01:40.020
+to change what composable's
+already displayed.
+
+00:01:40.020 --> 00:01:42.400
+For example, we don't want
+to display the greeting
+
+00:01:42.400 --> 00:01:45.450
+if the name is empty,
+so we can use the state
+
+00:01:45.450 --> 00:01:46.653
+in an if statement.
+
+00:01:47.880 --> 00:01:51.800
+While remember helps us retain
+state across re-compositions,
+
+00:01:51.800 --> 00:01:55.010
+the state won't be retained
+across configuration changes.
+
+00:01:55.010 --> 00:01:58.682
+For this, we'll have to
+use rememberSaveable.
+
+00:01:58.682 --> 00:02:01.850
+RememberSavable will
+automatically save any value
+
+00:02:01.850 --> 00:02:03.830
+that can be saved in a bundle.
+
+00:02:03.830 --> 00:02:05.190
+But if that's not the case,
+
+00:02:05.190 --> 00:02:07.060
+you can pass in a custom saver object.
+
+00:02:07.060 --> 00:02:10.780
+Right now, our composable
+holds its own state.
+
+00:02:10.780 --> 00:02:14.400
+This makes the composable
+hard to reuse, hard to test,
+
+00:02:14.400 --> 00:02:16.470
+and keeps the composable tightly coupled
+
+00:02:16.470 --> 00:02:18.540
+to how the state is stored.
+
+00:02:18.540 --> 00:02:21.388
+So we should name this
+a stateless composable:
+
+00:02:21.388 --> 00:02:24.390
+a composable that doesn't hold any state.
+
+00:02:24.390 --> 00:02:27.610
+To do this, we can use state hoisting.
+
+00:02:27.610 --> 00:02:29.650
+State hoisting is a programming pattern
+
+00:02:29.650 --> 00:02:33.020
+where you move the state to
+the caller of a composable.
+
+00:02:33.020 --> 00:02:35.490
+A simple way to do it is
+by replacing the state
+
+00:02:35.490 --> 00:02:40.060
+with a parameter and use
+functions to represent events.
+
+00:02:40.060 --> 00:02:42.580
+The parameter is the current
+value to be displayed,
+
+00:02:42.580 --> 00:02:46.110
+and the event is a lambda
+function that gets triggered
+
+00:02:46.110 --> 00:02:49.140
+whenever the state needs to be updated.
+
+00:02:49.140 --> 00:02:52.060
+In our case, we extract the
+name and the onValueChange
+
+00:02:52.060 --> 00:02:54.450
+out of HelloContent and move them higher
+
+00:02:54.450 --> 00:02:57.917
+to a HelloScreen composable
+that calls HelloContent.
+
+00:02:58.865 --> 00:03:00.912
+HelloContent has access to the state
+
+00:03:00.912 --> 00:03:03.260
+as an immutable string parameter
+
+00:03:03.260 --> 00:03:06.180
+as well as a lambda
+onNameChange that it can call
+
+00:03:06.180 --> 00:03:09.260
+when it wants to request the state change.
+
+00:03:09.260 --> 00:03:10.830
+Lambdas are the most common way
+
+00:03:10.830 --> 00:03:13.390
+to describe events on a composable.
+
+00:03:13.390 --> 00:03:16.470
+Here, we're defining an
+event called onNameChange
+
+00:03:16.470 --> 00:03:18.380
+using a lambda that takes a string
+
+00:03:18.380 --> 00:03:21.520
+using Kotlin's function type syntax.
+
+00:03:21.520 --> 00:03:24.460
+We're using onNameChange, present tense,
+
+00:03:24.460 --> 00:03:25.620
+as the event doesn't mean
+
+00:03:25.620 --> 00:03:27.620
+that the state has already changed,
+
+00:03:27.620 --> 00:03:29.480
+but that the composable is requesting
+
+00:03:29.480 --> 00:03:31.333
+that the event handler change it.
+
+00:03:32.200 --> 00:03:34.470
+Like this, the state goes down
+
+00:03:34.470 --> 00:03:36.830
+from HelloScreen to HelloContent,
+
+00:03:36.830 --> 00:03:40.320
+and events go up from
+HelloContent to HelloScreen,
+
+00:03:40.320 --> 00:03:44.023
+making HelloContent more reusable
+and testable than before.
+
+00:03:45.130 --> 00:03:46.540
+But what if we want to use the name
+
+00:03:46.540 --> 00:03:48.400
+in other layers of our app?
+
+00:03:48.400 --> 00:03:50.890
+Maybe we want to save it in a database.
+
+00:03:50.890 --> 00:03:53.220
+The best way to do this
+is to use a view model
+
+00:03:53.220 --> 00:03:56.260
+that will store the state
+in an observable holder
+
+00:03:56.260 --> 00:03:58.460
+and handle events.
+
+00:03:58.460 --> 00:04:00.320
+So we can create a HelloViewModel
+
+00:04:00.320 --> 00:04:03.010
+that extends the ViewModel class.
+
+00:04:03.010 --> 00:04:06.940
+The view model holds and
+exposes the name in a LiveData,
+
+00:04:06.940 --> 00:04:09.040
+which then can be observed as state
+
+00:04:09.040 --> 00:04:11.350
+and passed to a composable.
+
+00:04:11.350 --> 00:04:14.710
+Like this, every time the
+value in LiveData changes,
+
+00:04:14.710 --> 00:04:17.500
+it will automatically
+trigger a re-composition
+
+00:04:17.500 --> 00:04:19.420
+of HelloContent.
+
+00:04:19.420 --> 00:04:22.020
+As the view model survives
+configuration changes,
+
+00:04:22.020 --> 00:04:25.550
+we don't need to do anything
+else to persist the UI state.
+
+00:04:25.550 --> 00:04:26.734
+Under the hood,
+
+00:04:26.734 --> 00:04:29.710
+observeAsState will also
+remember the state for it
+
+00:04:29.710 --> 00:04:32.350
+so it can survive re-composition.
+
+00:04:32.350 --> 00:04:34.540
+Then, we also hoist the event handling
+
+00:04:34.540 --> 00:04:36.070
+to the view model.
+
+00:04:36.070 --> 00:04:39.470
+Like this, the view model is
+the one that updates the state
+
+00:04:39.470 --> 00:04:41.860
+every time an event happens.
+
+00:04:41.860 --> 00:04:45.260
+As the UI state can be changed
+from other layers of the app,
+
+00:04:45.260 --> 00:04:47.720
+like based on the response
+of a network call,
+
+00:04:47.720 --> 00:04:50.860
+the view model allows us to
+better encapsulate the state
+
+00:04:50.860 --> 00:04:54.070
+and create a single source
+of truth for the UI,
+
+00:04:54.070 --> 00:04:57.850
+which makes it less likely to
+create inconsistent states.
+
+00:04:57.850 --> 00:04:59.730
+Okay, let's recap.
+
+00:04:59.730 --> 00:05:02.370
+If your state is internal to a composable,
+
+00:05:02.370 --> 00:05:03.940
+make sure you use "remember"
+
+00:05:03.940 --> 00:05:06.740
+to persist the state
+across re-composition.
+
+00:05:06.740 --> 00:05:09.490
+Use "rememberSaveable"
+to persist the state
+
+00:05:09.490 --> 00:05:11.840
+across configuration changes.
+
+00:05:11.840 --> 00:05:14.090
+Where possible, try to hoist the state
+
+00:05:14.090 --> 00:05:18.010
+to make the composable
+more reusable and testable.
+
+00:05:18.010 --> 00:05:21.490
+Finally, use the "ViewModel"
+to hold an exposed state
+
+00:05:21.490 --> 00:05:24.390
+in an observable state
+holder like LiveData
+
+00:05:24.390 --> 00:05:25.527
+and to handle events.
+
+00:05:26.500 --> 00:05:28.250
+To learn more about state in Compose,
+
+00:05:28.250 --> 00:05:29.390
+check out the documentation
+
+00:05:29.390 --> 00:05:31.600
+and the CodeLab link in
+the description below.
+
+00:05:31.600 --> 00:05:32.909
+Thanks for watching.
+
+00:05:32.909 --> 00:05:35.492
+(gentle music)
+
